@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SCASH — Scam Shield | Verify Before You Pay</title>
+  <meta name="description" content="SCASH is a crowdsourced fraud reporting platform. Search our community-driven database of flagged bank accounts, phone numbers, and emails before you transact." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ============================================
+       1. NAVIGATION BAR (Sticky)
+       ============================================ -->
+  <nav class="navbar navbar-expand-lg navbar-scash sticky-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand navbar-brand-scash" href="#">
+        <span class="brand-icon"><i class="bi bi-shield-check"></i></span>
+        SCASH
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu" aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-auto me-3 align-items-lg-center gap-1">
+          <li class="nav-item"><a class="nav-link" href="#hero">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="#alerts">Report a Scam</a></li>
+          <li class="nav-item"><a class="nav-link" href="#hero">Check Vendor</a></li>
+          <li class="nav-item"><a class="nav-link" href="#blog">Fraud Blog</a></li>
+          <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-person-circle me-1"></i>Login / Register</a></li>
+        </ul>
+        <a href="#alerts" class="btn btn-report-fraud">
+          <i class="bi bi-exclamation-triangle-fill me-1"></i>Report Fraud
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============================================
+       2. HERO SECTION (Pre-Payment Search)
+       ============================================ -->
+  <section class="hero" id="hero">
+    <div class="container hero-content text-center">
+      <h1 class="reveal">Don't Get Scammed.<br /><span class="highlight">Verify Before You Pay.</span></h1>
+      <p class="lead reveal">Search our community-driven database of over <strong>10,000</strong> flagged bank accounts, phone numbers, and emails.</p>
+
+      <!-- Search Bar -->
+      <div class="search-wrapper reveal" id="search-bar">
+        <select id="search-type" aria-label="Search type">
+          <option value="bank">🏦 Bank Account</option>
+          <option value="phone">📱 Phone Number</option>
+          <option value="email">📧 Email Address</option>
+        </select>
+        <input type="text" id="search-input" placeholder="Enter account number, phone, or email…" aria-label="Search query" />
+        <button class="btn-verify" id="btn-verify">
+          <i class="bi bi-search me-1"></i>Verify Now
+        </button>
+      </div>
+
+      <!-- Trust Badges -->
+      <div class="hero-badges reveal">
+        <div class="badge-item"><i class="bi bi-shield-fill-check"></i> Community Verified</div>
+        <div class="badge-item"><i class="bi bi-people-fill"></i> 15,000+ Users</div>
+        <div class="badge-item"><i class="bi bi-clock-history"></i> Real-time Updates</div>
+        <div class="badge-item"><i class="bi bi-lock-fill"></i> Anonymous Reporting</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       3. RECENT FRAUD ALERTS FEED
+       ============================================ -->
+  <section class="fraud-alerts section-padding" id="alerts">
+    <div class="container">
+      <div class="text-center reveal">
+        <span class="accent-bar"></span>
+        <h2 class="section-title">Latest Community Reports</h2>
+        <p class="section-subtitle">Real reports from real users — updated in real time.</p>
+      </div>
+
+      <div class="row g-4">
+        <!-- Card 1 -->
+        <div class="col-md-6 col-lg-3 reveal">
+          <div class="alert-card">
+            <div class="card-header-row">
+              <div class="user-info">
+                <div class="user-avatar">VU</div>
+                <div>
+                  <div class="username">VerifiedUser_849</div>
+                  <div class="time-posted">2 hours ago</div>
+                </div>
+              </div>
+              <span class="badge-scam">Never Delivered</span>
+            </div>
+            <div class="account-info">
+              <i class="bi bi-bank"></i>
+              <span>0123***89 — GTBank</span>
+            </div>
+            <p style="font-size:.87rem; color:var(--gray-600);">Paid ₦45,000 for an iPhone 13 on Instagram. Seller went silent after payment and blocked my number.</p>
+            <div class="trust-score">
+              <span class="label">Credibility</span>
+              <div class="trust-score-bar"><div class="fill" data-width="80%"></div></div>
+              <span class="value">8/10</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="col-md-6 col-lg-3 reveal">
+          <div class="alert-card">
+            <div class="card-header-row">
+              <div class="user-info">
+                <div class="user-avatar">SG</div>
+                <div>
+                  <div class="username">ScamGuard_102</div>
+                  <div class="time-posted">5 hours ago</div>
+                </div>
+              </div>
+              <span class="badge-scam">Impersonation</span>
+            </div>
+            <div class="account-info">
+              <i class="bi bi-phone"></i>
+              <span>0803***4521 — MTN</span>
+            </div>
+            <p style="font-size:.87rem; color:var(--gray-600);">Caller claimed to be from Access Bank security team. Tried to get my BVN and OTP. Almost fell for it.</p>
+            <div class="trust-score">
+              <span class="label">Credibility</span>
+              <div class="trust-score-bar"><div class="fill" data-width="90%"></div></div>
+              <span class="value">9/10</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="col-md-6 col-lg-3 reveal">
+          <div class="alert-card">
+            <div class="card-header-row">
+              <div class="user-info">
+                <div class="user-avatar">FA</div>
+                <div>
+                  <div class="username">FraudAlert_NG</div>
+                  <div class="time-posted">8 hours ago</div>
+                </div>
+              </div>
+              <span class="badge-scam">Fake Investment</span>
+            </div>
+            <div class="account-info">
+              <i class="bi bi-envelope"></i>
+              <span>invest***@proton.me</span>
+            </div>
+            <p style="font-size:.87rem; color:var(--gray-600);">Promised 300% ROI in 2 weeks via WhatsApp group. Collected ₦200,000 from multiple victims.</p>
+            <div class="trust-score">
+              <span class="label">Credibility</span>
+              <div class="trust-score-bar"><div class="fill" data-width="95%"></div></div>
+              <span class="value">9.5/10</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="col-md-6 col-lg-3 reveal">
+          <div class="alert-card">
+            <div class="card-header-row">
+              <div class="user-info">
+                <div class="user-avatar">TW</div>
+                <div>
+                  <div class="username">TrustWatch_33</div>
+                  <div class="time-posted">12 hours ago</div>
+                </div>
+              </div>
+              <span class="badge-scam">Phishing Link</span>
+            </div>
+            <div class="account-info">
+              <i class="bi bi-globe"></i>
+              <span>secure-***-verify.com</span>
+            </div>
+            <p style="font-size:.87rem; color:var(--gray-600);">Received SMS with a fake bank login page. The URL looked legit but domain was registered 2 days ago.</p>
+            <div class="trust-score">
+              <span class="label">Credibility</span>
+              <div class="trust-score-bar"><div class="fill" data-width="70%"></div></div>
+              <span class="value">7/10</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       4. HOW IT WORKS
+       ============================================ -->
+  <section class="how-it-works section-padding" id="how-it-works">
+    <div class="container">
+      <div class="text-center reveal">
+        <span class="accent-bar"></span>
+        <h2 class="section-title">How It Works</h2>
+        <p class="section-subtitle">Three simple steps to protect yourself from fraud.</p>
+      </div>
+
+      <div class="row align-items-center justify-content-center g-4">
+        <!-- Step 1 -->
+        <div class="col-md-4 col-lg-3 reveal">
+          <div class="step-card">
+            <div class="step-icon step-1"><i class="bi bi-search"></i></div>
+            <span class="step-number">Step 01</span>
+            <h5>Search the Vendor</h5>
+            <p>Enter a bank account, phone number, or email to check our community database.</p>
+          </div>
+        </div>
+
+        <!-- Connector -->
+        <div class="col-auto d-none d-md-flex step-connector reveal">
+          <i class="bi bi-chevron-double-right"></i>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="col-md-4 col-lg-3 reveal">
+          <div class="step-card">
+            <div class="step-icon step-2"><i class="bi bi-file-earmark-text"></i></div>
+            <span class="step-number">Step 02</span>
+            <h5>Read the Evidence</h5>
+            <p>Review detailed reports, screenshots, and credibility scores from real users.</p>
+          </div>
+        </div>
+
+        <!-- Connector -->
+        <div class="col-auto d-none d-md-flex step-connector reveal">
+          <i class="bi bi-chevron-double-right"></i>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="col-md-4 col-lg-3 reveal">
+          <div class="step-card">
+            <div class="step-icon step-3"><i class="bi bi-shield-fill-check"></i></div>
+            <span class="step-number">Step 03</span>
+            <h5>Transact Safely</h5>
+            <p>If the vendor is clean, proceed with confidence — or file a report to warn others.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       5. FRAUD BLOG & NEWS
+       ============================================ -->
+  <section class="blog-section section-padding" id="blog">
+    <div class="container">
+      <div class="text-center reveal">
+        <span class="accent-bar"></span>
+        <h2 class="section-title">Scam Alerts & Prevention News</h2>
+        <p class="section-subtitle">Stay informed with the latest fraud trends and security tips.</p>
+      </div>
+
+      <div class="row g-4">
+        <!-- Blog Card 1 -->
+        <div class="col-md-6 col-lg-4 reveal">
+          <div class="blog-card">
+            <div class="card-img-wrapper" style="background: linear-gradient(135deg, #1a1a2e, #16213e);">
+              <div class="blog-placeholder"><i class="bi bi-shop-window"></i></div>
+              <span class="blog-badge trending"><i class="bi bi-fire me-1"></i>Trending Scam</span>
+            </div>
+            <div class="card-body-blog">
+              <h5>Beware of the New Instagram Thrift Store Ghosting Trend</h5>
+              <p>Fraudsters are creating polished Instagram shops, collecting payments for non-existent items, then deleting their accounts overnight. Here's how to spot them.</p>
+              <a href="#" class="read-more">Read More <i class="bi bi-arrow-right"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Blog Card 2 -->
+        <div class="col-md-6 col-lg-4 reveal">
+          <div class="blog-card">
+            <div class="card-img-wrapper" style="background: linear-gradient(135deg, #0d7046, #134e36);">
+              <div class="blog-placeholder"><i class="bi bi-shield-lock"></i></div>
+              <span class="blog-badge tips"><i class="bi bi-lightbulb me-1"></i>Security Tips</span>
+            </div>
+            <div class="card-body-blog">
+              <h5>5 Ways to Verify a Seller Before Sending Money Online</h5>
+              <p>From checking registration dates to reverse-image searches, these five steps can save you from losing your hard-earned money to scammers.</p>
+              <a href="#" class="read-more">Read More <i class="bi bi-arrow-right"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Blog Card 3 -->
+        <div class="col-md-6 col-lg-4 reveal">
+          <div class="blog-card">
+            <div class="card-img-wrapper" style="background: linear-gradient(135deg, #3a0647, #1a0325);">
+              <div class="blog-placeholder"><i class="bi bi-piggy-bank"></i></div>
+              <span class="blog-badge update"><i class="bi bi-megaphone me-1"></i>CBN Update</span>
+            </div>
+            <div class="card-body-blog">
+              <h5>CBN Issues New Guidelines on P2P Payment Fraud Reporting</h5>
+              <p>The Central Bank of Nigeria has released updated guidelines requiring banks to freeze flagged accounts within 24 hours of verified reports.</p>
+              <a href="#" class="read-more">Read More <i class="bi bi-arrow-right"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       6. FOOTER
+       ============================================ -->
+  <footer class="footer" id="footer">
+    <div class="container">
+      <div class="row g-4">
+        <!-- Brand -->
+        <div class="col-lg-4">
+          <div class="footer-brand">
+            <i class="bi bi-shield-check" style="color:var(--emerald);"></i> SCASH
+          </div>
+          <p>A community-driven platform empowering Nigerians to verify vendors and report fraud before it happens.</p>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="col-6 col-lg-2">
+          <h6>Platform</h6>
+          <ul class="footer-links">
+            <li><a href="#hero">Home</a></li>
+            <li><a href="#alerts">Report a Scam</a></li>
+            <li><a href="#hero">Check Vendor</a></li>
+            <li><a href="#blog">Fraud Blog</a></li>
+          </ul>
+        </div>
+
+        <!-- Resources -->
+        <div class="col-6 col-lg-2">
+          <h6>Resources</h6>
+          <ul class="footer-links">
+            <li><a href="#">How It Works</a></li>
+            <li><a href="#">API Access</a></li>
+            <li><a href="#">Community</a></li>
+            <li><a href="#">FAQs</a></li>
+          </ul>
+        </div>
+
+        <!-- Legal -->
+        <div class="col-6 col-lg-2">
+          <h6>Legal</h6>
+          <ul class="footer-links">
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Data Policy</a></li>
+            <li><a href="#">Cookie Settings</a></li>
+          </ul>
+        </div>
+
+        <!-- Contact -->
+        <div class="col-6 col-lg-2">
+          <h6>Connect</h6>
+          <ul class="footer-links">
+            <li><a href="#">support@scash.ng</a></li>
+            <li><a href="#">Twitter / X</a></li>
+            <li><a href="#">Instagram</a></li>
+            <li><a href="#">WhatsApp</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="footer-bottom">
+        <div>
+          <span>© 2026 SCASH (Scam Shield). All rights reserved.</span>
+          <p class="footer-disclaimer mt-1 mb-0">
+            <i class="bi bi-info-circle me-1"></i>
+            Disclaimer: SCASH relies on crowdsourced data submitted by community members. While we strive for accuracy, reports may not reflect verified legal outcomes. Always exercise due diligence.
+          </p>
+        </div>
+        <div class="footer-social">
+          <a href="#" aria-label="Twitter"><i class="bi bi-twitter-x"></i></a>
+          <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+          <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+          <a href="#" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom JS -->
+  <script src="script.js"></script>
+</body>
+</html>

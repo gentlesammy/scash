@@ -1,0 +1,27 @@
+{
+  "name": "SCASH Scam Shield",
+  "short_name": "SCASH",
+  "description": "Crowdsourced fraud reporting and vendor verification platform in Nigeria.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F5F6FA",
+  "theme_color": "#0B1D3A",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "https://img.icons8.com/color/192/shield.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://img.icons8.com/color/512/shield.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

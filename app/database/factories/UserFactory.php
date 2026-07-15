@@ -1,0 +1,77 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Models\User;
+use App\Services\PseudonymGenerator;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
+
+/**
+ * @extends Factory<User>
+ */
+class UserFactory extends Factory
+{
+    /**
+     * The current password being used by the factory.
+     */
+    protected static ?string $password;
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'pseudonym'         => (new PseudonymGenerator())->generate(),
+            'phone'             => fake()->unique()->numerify('+234##########'),
+            'email'             => fake()->unique()->safeEmail(),
+            'phone_verified_at' => now(),
+            'email_verified_at' => now(),
+            'password'          => static::$password ??= Hash::make('password'),
+            'role_id'           => 4, // Default: User role
+            'trust_points'      => fake()->numberBetween(0, 500),
+            'credibility_rank'  => fake()->numberBetween(1, 7),
+            'is_banned'         => false,
+            'remember_token'    => Str::random(10),
+        ];
+    }
+
+    /**
+     * Indicate that the model's email address should be unverified.
+     */
+    public function unverified(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'email_verified_at' => null,
+            'phone_verified_at' => null,
+        ]);
+    }
+
+    /**
+     * Create a moderator user.
+     */
+    public function moderator(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role_id'          => 3,
+            'trust_points'     => fake()->numberBetween(300, 800),
+            'credibility_rank' => fake()->numberBetween(6, 9),
+        ]);
+    }
+
+    /**
+     * Create an admin user.
+     */
+    public function admin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role_id'          => 2,
+            'trust_points'     => 1000,
+            'credibility_rank' => 10,
+        ]);
+    }
+}
