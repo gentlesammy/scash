@@ -38,6 +38,20 @@ return new class extends Migration
                 'created_at'  => now(),
                 'updated_at'  => now(),
             ],
+            [
+                'key'         => 'require_email_verification',
+                'value'       => '0',
+                'description' => 'When enabled (1), users must verify their email address before accessing the dashboard. Default: off until production email infrastructure is ready.',
+                'created_at'  => now(),
+                'updated_at'  => now(),
+            ],
+            [
+                'key'         => 'require_phone_verification',
+                'value'       => '0',
+                'description' => 'When enabled (1), users must verify their phone number via OTP before accessing the dashboard. Default: off until production SMS infrastructure is ready.',
+                'created_at'  => now(),
+                'updated_at'  => now(),
+            ],
         ]);
     }
 

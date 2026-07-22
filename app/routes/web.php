@@ -72,4 +72,6 @@ Route::get('/dashboard', \App\Livewire\UserDashboard::class)
 Route::middleware(['auth', 'not.banned', 'phone.verified', 'email.verified', 'role:moderator'])->group(function () {
     Route::get('/admin/reports', \App\Livewire\Admin\Reports::class)->name('admin.reports');
     Route::get('/admin/users', \App\Livewire\Admin\Users::class)->name('admin.users');
+    Route::get('/admin/settings', \App\Livewire\Admin\Settings::class)->name('admin.settings');
 });
+

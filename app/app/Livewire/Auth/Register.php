@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Auth;
 
+use App\Models\Setting;
 use App\Models\User;
 use App\Models\BannedPhone;
 use Illuminate\Support\Facades\Auth;
@@ -45,7 +46,12 @@ class Register extends Component
 
         Auth::login($user);
 
-        return redirect()->route('verification.phone');
+        // 4. Redirect based on whether phone verification is currently required
+        if (Setting::getValue('require_phone_verification', '0') === '1') {
+            return redirect()->route('verification.phone');
+        }
+
+        return redirect()->route('dashboard');
     }
 
     public function render()

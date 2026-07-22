@@ -8,6 +8,9 @@
             <a href="/admin/reports" class="btn btn-sm btn-outline-secondary rounded-pill px-3 fw-semibold">
                 <i class="bi bi-file-earmark-text-fill me-1"></i> Manage Reports
             </a>
+            <a href="/admin/settings" class="btn btn-sm btn-outline-secondary rounded-pill px-3 fw-semibold">
+                <i class="bi bi-gear-fill me-1"></i> Settings
+            </a>
         </div>
     </div>
 

@@ -8,6 +8,9 @@
             <a href="/admin/users" class="btn btn-sm btn-outline-secondary rounded-pill px-3 fw-semibold">
                 <i class="bi bi-people-fill me-1"></i> Manage Users
             </a>
+            <a href="/admin/settings" class="btn btn-sm btn-outline-secondary rounded-pill px-3 fw-semibold">
+                <i class="bi bi-gear-fill me-1"></i> Settings
+            </a>
         </div>
     </div>
 
