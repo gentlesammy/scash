@@ -4,6 +4,8 @@ namespace App\Livewire;
 
 use App\Models\Rating;
 use App\Models\Report;
+use App\Services\NotificationService;
+use App\Services\TrustService;
 use Livewire\Component;
 
 class RateEvidence extends Component
@@ -95,6 +97,16 @@ class RateEvidence extends Component
 
         // 2. Recalculate report weighted credibility
         $report = Report::findOrFail($this->reportId);
+        $report->loadMissing('user');
+
+        if ($report->user && $report->user->id !== $user->id) {
+            app(NotificationService::class)->send(
+                $report->user, 'report_rated',
+                'Your report received a new rating',
+                "A community member rated Report #{$this->reportId} with a credibility score of {$this->score}/10.",
+                $this->reportId
+            );
+        }
         
         // Sum of all (rating.score * rater.credibility_rank)
         $weightedCredibilitySum = 0;
@@ -118,6 +130,13 @@ class RateEvidence extends Component
             if ($author) {
                 $trustService = new TrustService();
                 $trustService->awardPoints($author, 5, 'report_received_10_ratings', $report->id);
+
+                app(NotificationService::class)->send(
+                    $author, 'report_milestone',
+                    'Milestone: 10 community ratings received!',
+                    "Report #{$report->id} has reached 10 ratings. +5 Trust Points have been awarded.",
+                    $report->id
+                );
             }
         }
 

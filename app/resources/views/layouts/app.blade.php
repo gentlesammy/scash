@@ -56,6 +56,9 @@
                         @if(auth()->user()->isModerator())
                             <li class="nav-item"><a class="nav-link text-warning-light" href="/admin/reports"><i class="bi bi-shield-lock-fill me-1"></i>Moderator Panel</a></li>
                         @endif
+                        <li class="nav-item">
+                            @livewire('notification-bell')
+                        </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle fw-semibold" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="bi bi-person-circle me-1"></i>{{ auth()->user()->pseudonym }} ({{ auth()->user()->trust_points }} TP)

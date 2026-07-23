@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -85,6 +86,16 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->belongsTo(Role::class);
     }
 
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(Notification::class);
+    }
+
+    public function unreadNotificationCount(): int
+    {
+        return $this->notifications()->unread()->count();
+    }
+
     /* ─── Scopes ─── */
 
     public function scopeVerified($query)
@@ -119,7 +130,13 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function isFullyVerified(): bool
     {
-        return $this->phone_verified_at !== null && $this->email_verified_at !== null;
+        $requirePhone = \App\Models\Setting::getValue('require_phone_verification', '0') === '1';
+        $requireEmail = \App\Models\Setting::getValue('require_email_verification', '0') === '1';
+
+        $phoneOk = !$requirePhone || $this->phone_verified_at !== null;
+        $emailOk = !$requireEmail || $this->email_verified_at !== null;
+
+        return $phoneOk && $emailOk;
     }
 
     /* ─── Role Helpers ─── */

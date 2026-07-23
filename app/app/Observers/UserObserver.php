@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\User;
+use App\Services\NotificationService;
 use Illuminate\Support\Str;
 
 class UserObserver
@@ -15,6 +16,18 @@ class UserObserver
         if (empty($user->pseudonym)) {
             $user->pseudonym = $this->generateUniquePseudonym();
         }
+    }
+
+    /**
+     * Handle the User "created" event (after the row exists in DB).
+     */
+    public function created(User $user): void
+    {
+        app(NotificationService::class)->send(
+            $user, 'welcome',
+            'Welcome to SCASH!',
+            'Your account has been created. Start by verifying a vendor or reporting a scam to earn Trust Points.'
+        );
     }
 
     /**

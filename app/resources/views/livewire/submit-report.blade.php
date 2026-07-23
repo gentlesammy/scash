@@ -26,13 +26,13 @@
                   @submit.prevent="
                       const siteKey = '{{ config('services.recaptcha.site_key') }}';
                       if (!siteKey) {
-                          $wire.set('recaptchaToken', 'mock-token');
+                          $wire.recaptchaToken = 'mock-token';
                           $wire.submitStepOne();
                           return;
                       }
                       grecaptcha.ready(() => {
                           grecaptcha.execute(siteKey, {action: 'submit_report'}).then((token) => {
-                              $wire.set('recaptchaToken', token);
+                              $wire.recaptchaToken = token;
                               $wire.submitStepOne();
                           });
                       });
@@ -56,15 +56,15 @@
                     <label class="form-label text-navy fw-semibold small">Scammer Identifier Type</label>
                     <div class="d-flex gap-3">
                         <div class="form-check">
-                            <input type="radio" wire:model="vendor_type" value="bank" id="typeBank" class="form-check-input" />
+                            <input type="radio" wire:model.live="vendor_type" value="bank" id="typeBank" class="form-check-input" />
                             <label for="typeBank" class="form-check-label small">🏦 Bank Account</label>
                         </div>
                         <div class="form-check">
-                            <input type="radio" wire:model="vendor_type" value="phone" id="typePhone" class="form-check-input" />
+                            <input type="radio" wire:model.live="vendor_type" value="phone" id="typePhone" class="form-check-input" />
                             <label for="typePhone" class="form-check-label small">📱 Phone Number</label>
                         </div>
                         <div class="form-check">
-                            <input type="radio" wire:model="vendor_type" value="email" id="typeEmail" class="form-check-input" />
+                            <input type="radio" wire:model.live="vendor_type" value="email" id="typeEmail" class="form-check-input" />
                             <label for="typeEmail" class="form-check-label small">📧 Email Address</label>
                         </div>
                     </div>
@@ -99,7 +99,7 @@
                 @endif
 
                 <!-- Payment Receipt Upload & Redaction Tool -->
-                <div class="mb-4" x-data="redactionTool()">
+                <div class="mb-4" x-data="redactionTool($wire)">
                     <label class="form-label text-navy fw-semibold small">Payment Receipt (Image evidence)</label>
                     <div class="border border-dashed border-light-subtle p-4 rounded-3 text-center bg-light-subtle cursor-pointer position-relative mb-2">
                         <input type="file" id="receiptInput" accept="image/*" class="position-absolute opacity-0 start-0 top-0 w-100 h-100 cursor-pointer" x-on:change="loadImage($event)" style="z-index: 2;" />
@@ -112,7 +112,7 @@
                     @error('original_image') <div class="text-danger small mb-2">{{ $message }}</div> @enderror
 
                     <!-- Redaction Canvas Area (hidden initially until image is loaded) -->
-                    <div id="redactorContainer" class="d-none border border-light-subtle rounded-3 p-3 bg-light mt-3">
+                    <div id="redactorContainer" wire:ignore class="d-none border border-light-subtle rounded-3 p-3 bg-light mt-3">
                         <div class="d-flex justify-content-between align-items-center mb-2.5">
                             <span class="text-navy fw-bold small"><i class="bi bi-brush-fill text-coral me-1"></i> Receipt Redactor & Privacy Canvas</span>
                             <div class="d-flex gap-2">
@@ -187,14 +187,13 @@
                     @error('screenshot_uploads.*') <span class="text-danger small d-block">{{ $message }}</span> @enderror
                 </div>
 
-                <!-- Buttons row -->
                 <div class="d-flex justify-content-between align-items-center border-top pt-3 mt-4">
                     <span class="text-secondary small">* Real identity will remain hidden.</span>
-                    <button type="submit" wire:loading.attr="disabled" class="btn btn-success px-4 py-2.5 rounded-3 fw-bold border-0 text-white" style="background-color: var(--emerald); min-width: 180px;">
-                        <span wire:loading.remove>
+                    <button type="submit" wire:loading.attr="disabled" wire:target="submitStepTwo" class="btn btn-success px-4 py-2.5 rounded-3 fw-bold border-0 text-white" style="background-color: var(--emerald); min-width: 180px;">
+                        <span wire:loading.remove wire:target="submitStepTwo">
                             <i class="bi bi-shield-fill-check"></i> Complete & Post
                         </span>
-                        <span wire:loading class="d-flex align-items-center gap-2 justify-content-center">
+                        <span wire:loading wire:target="submitStepTwo" class="d-flex align-items-center gap-2 justify-content-center">
                             <span class="spinner-border spinner-border-sm" role="status"></span>
                             Posting...
                         </span>
@@ -206,7 +205,7 @@
 
     <!-- Client-Side Redactor Drawing Javascript -->
     <script>
-        function redactionTool() {
+        function redactionTool($wire) {
             return {
                 canvas: null,
                 ctx: null,
@@ -229,7 +228,7 @@
                     reader.readAsDataURL(file);
                     
                     // Direct upload via Livewire for the original image
-                    @this.upload('original_image', file);
+                    $wire.upload('original_image', file);
                 },
 
                 initCanvas() {
@@ -321,7 +320,7 @@
                     this.ctx.drawImage(this.img, 0, 0, this.canvas.width, this.canvas.height);
                     this.redacted = false;
                     document.getElementById('redactedDataInput').value = '';
-                    @this.set('redacted_image_data', null);
+                    $wire.redacted_image_data = null;
                 },
 
                 applyRedaction() {
@@ -332,7 +331,7 @@
                     
                     // Lock Base64 in hidden input and transfer to Livewire
                     document.getElementById('redactedDataInput').value = dataUrl;
-                    @this.set('redacted_image_data', dataUrl);
+                    $wire.redacted_image_data = dataUrl;
                     this.redacted = true;
                 }
             };

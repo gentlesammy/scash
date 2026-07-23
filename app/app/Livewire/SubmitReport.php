@@ -87,17 +87,24 @@ class SubmitReport extends Component
         $rules = [
             'scam_category_id' => 'required|exists:scam_categories,id',
             'vendor_type' => 'required|in:bank,phone,email',
-            'vendor_value' => 'required|string|min:3|max:100',
             'original_image' => 'required|image|max:5120|mimes:jpeg,png,webp', // Max 5MB
             'recaptchaToken' => ['required', new \App\Rules\Recaptcha('submit_report')],
         ];
 
         if ($this->vendor_type === 'bank') {
             $rules['bank_name'] = 'required|string|min:2|max:100';
+            $rules['vendor_value'] = 'required|digits:10';
+        } elseif ($this->vendor_type === 'phone') {
+            $rules['vendor_value'] = ['required', 'string', 'min:10', 'max:15', 'regex:/^\+?\d+$/'];
+        } else {
+            $rules['vendor_value'] = 'required|email|max:100';
         }
 
         $this->validate($rules, [
             'recaptchaToken.required' => 'The security verification token is missing. Please try again.',
+            'vendor_value.digits' => 'The bank account number must be exactly 10 digits.',
+            'vendor_value.regex' => 'Please enter a valid phone number, digits only.',
+            'vendor_value.email' => 'Please provide a valid email address.',
         ]);
 
         // 1. Save Original receipt file privately

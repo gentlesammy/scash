@@ -68,6 +68,10 @@ Route::get('/dashboard', \App\Livewire\UserDashboard::class)
     ->name('dashboard')
     ->middleware(['auth', 'not.banned', 'phone.verified', 'email.verified']);
 
+Route::get('/dashboard/notifications', \App\Livewire\NotificationsPage::class)
+    ->name('dashboard.notifications')
+    ->middleware(['auth', 'not.banned', 'phone.verified', 'email.verified']);
+
 // Admin / Moderator Dashboard Routes
 Route::middleware(['auth', 'not.banned', 'phone.verified', 'email.verified', 'role:moderator'])->group(function () {
     Route::get('/admin/reports', \App\Livewire\Admin\Reports::class)->name('admin.reports');

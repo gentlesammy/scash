@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\TrustPointLog;
 use App\Models\User;
+use App\Services\NotificationService;
 
 class TrustService
 {
@@ -42,6 +43,13 @@ class TrustService
         ]);
 
         $this->recalculateRank($user);
+
+        app(NotificationService::class)->send(
+            $user, 'points_awarded',
+            "+{$points} Trust Points earned",
+            ucwords(str_replace('_', ' ', $reason)),
+            $reportId
+        );
     }
 
     /**
@@ -67,6 +75,13 @@ class TrustService
         ]);
 
         $this->recalculateRank($user);
+
+        app(NotificationService::class)->send(
+            $user, 'points_deducted',
+            "-{$deduction} Trust Points deducted",
+            ucwords(str_replace('_', ' ', $reason)),
+            $reportId
+        );
     }
 
     /**
@@ -88,7 +103,15 @@ class TrustService
 
         // Only save and log if the rank changed
         if ($user->credibility_rank !== $targetRank) {
+            $oldRank = $user->credibility_rank;
             $user->update(['credibility_rank' => $targetRank]);
+
+            $direction = $targetRank > $oldRank ? 'promoted' : 'demoted';
+            app(NotificationService::class)->send(
+                $user, 'rank_changed',
+                "Credibility rank {$direction} to Rank {$targetRank}",
+                'Your credibility rank has changed based on your Trust Point balance.'
+            );
         }
     }
 }

@@ -94,6 +94,14 @@
                         <i class="bi bi-calculator-fill me-1"></i> Trust Points Ledger
                     </button>
                 </li>
+                <li class="nav-item" role="presentation">
+                    <a href="{{ route('dashboard.notifications') }}" class="nav-link border-0 fw-bold px-3 py-2.5 text-secondary">
+                        <i class="bi bi-bell-fill me-1"></i> Notifications
+                        @if($user->unreadNotificationCount() > 0)
+                            <span class="badge bg-danger rounded-pill ms-1">{{ $user->unreadNotificationCount() }}</span>
+                        @endif
+                    </a>
+                </li>
             </ul>
 
             <!-- Tab content body -->

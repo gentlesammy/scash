@@ -4,6 +4,7 @@ namespace App\Livewire\Admin;
 
 use App\Models\BannedPhone;
 use App\Models\User;
+use App\Services\NotificationService;
 use App\Services\TrustService;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -59,6 +60,12 @@ class Users extends Component
         }
 
         session()->flash('success', "User {$user->pseudonym} has been permanently banned and their number burned.");
+
+        app(NotificationService::class)->send(
+            $user, 'account_banned',
+            'Your account has been suspended',
+            'Your account has been permanently banned by an administrator. If you believe this is an error, contact support.'
+        );
     }
 
     /**
@@ -76,6 +83,12 @@ class Users extends Component
         }
 
         session()->flash('success', "User {$user->pseudonym} unbanned successfully.");
+
+        app(NotificationService::class)->send(
+            $user, 'account_unbanned',
+            'Your account has been restored',
+            'Your account ban has been lifted. Welcome back to the SCASH community.'
+        );
     }
 
     /**

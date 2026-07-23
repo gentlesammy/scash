@@ -54,7 +54,14 @@ class Evidence extends Model
             return $path;
         }
 
-        // If local storage path, return local asset path.
-        return Storage::disk(config('filesystems.default', 'local'))->url($path);
+        $disk = Storage::disk(config('filesystems.default', 'local'));
+
+        try {
+            // Use temporary signed URLs for private disks (valid for 60 minutes)
+            return $disk->temporaryUrl($path, now()->addMinutes(60));
+        } catch (\RuntimeException $e) {
+            // Fallback for public disks or drivers that don't support temporary URLs
+            return $disk->url($path);
+        }
     }
 }

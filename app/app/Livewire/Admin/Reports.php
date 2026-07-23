@@ -5,6 +5,7 @@ namespace App\Livewire\Admin;
 use App\Models\Rating;
 use App\Models\Report;
 use App\Models\User;
+use App\Services\NotificationService;
 use App\Services\TrustService;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -52,6 +53,17 @@ class Reports extends Component
         }
 
         session()->flash('success', "Report #{$reportId} marked as Verified. Aligned raters rewarded.");
+
+        $notificationService = app(NotificationService::class);
+        if ($report->user) {
+            $notificationService->send(
+                $report->user,
+                'report_verified',
+                'Your report has been verified!',
+                "Report #{$reportId} was reviewed and confirmed by a moderator. Aligned raters have been rewarded.",
+                $reportId
+            );
+        }
     }
 
     /**
@@ -83,6 +95,17 @@ class Reports extends Component
         }
 
         session()->flash('success', "Report #{$reportId} marked as Fake. Penalties and skepticism rewards applied.");
+
+        $notificationService = app(NotificationService::class);
+        if ($report->user) {
+            $notificationService->send(
+                $report->user,
+                'report_marked_fake',
+                'Your report was marked as fake',
+                "Report #{$reportId} has been reviewed and determined to be fabricated. A Trust Point penalty has been applied.",
+                $reportId
+            );
+        }
     }
 
     /**
@@ -92,10 +115,21 @@ class Reports extends Component
     {
         $this->authorizeModerator();
 
-        $report = Report::findOrFail($reportId);
+        $report = Report::with('user')->findOrFail($reportId);
         $report->update(['status' => 'escalated']);
 
         session()->flash('success', "Report #{$reportId} escalated to admin review.");
+
+        $notificationService = app(NotificationService::class);
+        if ($report->user) {
+            $notificationService->send(
+                $report->user,
+                'report_escalated',
+                'Your report has been escalated',
+                "Report #{$reportId} has been flagged for additional admin review.",
+                $reportId
+            );
+        }
     }
 
     /**
