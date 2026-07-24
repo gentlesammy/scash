@@ -83,7 +83,7 @@
                         <label class="form-label text-navy fw-semibold small">
                             @if($vendor_type === 'bank') Bank Account Number @elseif($vendor_type === 'phone') Phone Number @else Email Address @endif
                         </label>
-                        <input type="text" wire:model="vendor_value" placeholder="Enter scammer details..." class="form-control border-light-subtle rounded-3 p-2.5" />
+                        <input type="text" wire:model.live.debounce.500ms="vendor_value" placeholder="Enter scammer details..." class="form-control border-light-subtle rounded-3 p-2.5" />
                         @error('vendor_value') <span class="text-danger small">{{ $message }}</span> @enderror
                     </div>
                 </div>

@@ -31,10 +31,10 @@ class SearchService
     {
         $normalized = $this->normalizeQuery($type, $query);
         
-        // Salted HMAC-SHA256 using APP_KEY as pepper. Protects low-entropy search targets 
-        // (10-digit bank accounts, 11-digit phone numbers) from offline GPU brute-force/rainbow table attacks.
-        $pepper = config('app.key', 'scash-fallback-pepper-key');
-        $queryHash = hash_hmac('sha256', $normalized, $pepper);
+        // Deterministic slow hashing (PBKDF2) using APP_KEY as salt. Protects low-entropy search targets 
+        // from offline GPU brute-force by intentionally making the hash calculation computationally expensive.
+        $salt = config('app.key', 'scash-fallback-pepper-key');
+        $queryHash = hash_pbkdf2('sha256', $normalized, $salt, 100000, 64);
 
         // 1. Whitelist Check (Safe Vendor status)
         $safeVendor = $this->checkWhitelist($type, $normalized);
@@ -142,8 +142,11 @@ class SearchService
                 ->get();
         }
 
+        // Escape SQL wildcards to prevent ReDoS full-table scans
+        $escaped = addcslashes($normalized, '%_');
+
         // Partial match fallback (capped at 20 results to protect performance)
-        return $queryBuilder->where($column, 'LIKE', "%{$normalized}%")
+        return $queryBuilder->where($column, 'LIKE', "%{$escaped}%")
             ->orderBy('ranking_score', 'desc')
             ->limit(20)
             ->get();

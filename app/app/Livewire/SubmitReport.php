@@ -6,6 +6,7 @@ use App\Models\Evidence;
 use App\Models\Report;
 use App\Models\ScamCategory;
 use App\Models\User;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Component;
@@ -84,6 +85,11 @@ class SubmitReport extends Component
             abort(403, 'Unauthorized access. Verification required.');
         }
 
+        $rateLimitKey = 'submit-report:' . $user->id;
+        if (RateLimiter::tooManyAttempts($rateLimitKey, 5)) {
+            abort(429, 'Too many reports submitted. Please try again later.');
+        }
+
         $rules = [
             'scam_category_id' => 'required|exists:scam_categories,id',
             'vendor_type' => 'required|in:bank,phone,email',
@@ -138,11 +144,13 @@ class SubmitReport extends Component
             'report_id' => $report->id,
             'type' => 'receipt',
             'file_path' => $originalPath,
-            'redacted_file_path' => $redactedPath ?? $originalPath, // fallback to original if no redaction was made
+            'redacted_file_path' => $redactedPath, // Explicitly store null if no redaction was made
         ]);
 
         // Award default points for Stage 1 submission (+10 TP)
         $user->increment('trust_points', 10);
+
+        RateLimiter::hit($rateLimitKey, 3600);
 
         // Move to Stage 2 wizard
         $this->step = 2;
@@ -156,6 +164,11 @@ class SubmitReport extends Component
         $user = auth()->user();
         if (!$user || !$user->isFullyVerified() || $user->is_banned) {
             abort(403, 'Unauthorized.');
+        }
+
+        $rateLimitKey = 'submit-report-step2:' . $user->id;
+        if (RateLimiter::tooManyAttempts($rateLimitKey, 5)) {
+            abort(429, 'Too many report attachments submitted. Please try again later.');
         }
 
         $this->validate([
@@ -187,6 +200,8 @@ class SubmitReport extends Component
 
         // Award bonus Trust Points for Stage 2 narrative detail (+15 TP)
         $user->increment('trust_points', 15);
+
+        RateLimiter::hit($rateLimitKey, 3600);
 
         session()->flash('success', 'Thank you! Your fraud report has been successfully logged. +25 Total Trust Points earned.');
 
