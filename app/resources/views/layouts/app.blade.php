@@ -53,9 +53,11 @@
                     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
                     <li class="nav-item"><a class="nav-link" href="/verify">Verify Vendor</a></li>
                     @auth
-                        @if(auth()->user()->isModerator())
-                            <li class="nav-item"><a class="nav-link text-warning-light" href="/admin/reports"><i class="bi bi-shield-lock-fill me-1"></i>Moderator Panel</a></li>
-                        @endif
+                        @can('reports.view_queue')
+                            <li class="nav-item">
+                                <a class="nav-link text-warning fw-bold" href="{{ route('admin.reports') }}">Admin Dashboard</a>
+                            </li>
+                        @endcan
                         <li class="nav-item">
                             @livewire('notification-bell')
                         </li>

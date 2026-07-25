@@ -13,7 +13,7 @@ class Settings extends Component
     public function mount(): void
     {
         // Gate: only admins can access this panel
-        abort_unless(auth()->user()?->isAdmin(), 403);
+        abort_unless(auth()->user()?->hasRole('superadmin'), 403, 'Unauthorized. Superadmin clearance required.');
 
         $this->requireEmailVerification = Setting::getValue('require_email_verification', '0') === '1';
         $this->requirePhoneVerification = Setting::getValue('require_phone_verification', '0') === '1';

@@ -85,25 +85,25 @@
                     <tr class="border-bottom border-light-subtle {{ $user->is_banned ? 'table-danger opacity-75' : '' }}">
                         <td class="px-3 fw-bold text-navy">{{ $user->pseudonym }}</td>
                         <td>
-                            @if(auth()->user()->isAdmin())
+                            @can('users.ban_permanent')
                                 {{ $user->email }}
                             @else
                                 <span class="text-secondary italic">[Hidden]</span>
-                            @endif
+                            @endcan
                         </td>
                         <td>
-                            @if(auth()->user()->isAdmin())
+                            @can('users.ban_permanent')
                                 {{ $user->phone }}
                             @else
                                 <span class="text-secondary italic">[Hidden]</span>
-                            @endif
+                            @endcan
                         </td>
                         <td class="fw-bold">{{ $user->trust_points }} TP</td>
                         <td>
                             <span class="badge bg-success-subtle text-success">Rank {{ $user->credibility_rank }}</span>
                             <span class="text-2xs text-secondary d-block">{{ $user->credibility_rank_label }}</span>
                         </td>
-                        <td class="text-capitalize">{{ $user->role ? $user->role->name : 'User' }}</td>
+                        <td class="text-capitalize">{{ $user->roles->pluck('name')->join(', ') ?: 'User' }}</td>
                         <td>
                             @if($user->is_banned)
                                 <span class="badge bg-danger text-white rounded-pill px-2.5 py-1">Banned</span>
@@ -116,19 +116,25 @@
                                 <div class="d-inline-flex gap-1">
                                     
                                     <!-- Points Adjust Button -->
+                                    @can('users.edit_credibility_score')
                                     <button wire:click="$set('selectedUserId', {{ $user->id }})" class="btn btn-xs btn-outline-secondary rounded-pill px-2.5 py-1 text-2xs fw-bold">
                                         Adjust TP
                                     </button>
+                                    @endcan
 
                                     <!-- Ban / Unban Toggle -->
                                     @if($user->is_banned)
+                                        @can('users.unban')
                                         <button onclick="confirm('Restore this user account? Their phone number will be removed from the burned whitelist.') && @this.unbanUser({{ $user->id }})" class="btn btn-xs btn-outline-success rounded-pill px-2.5 py-1 text-2xs fw-bold">
                                             Unban
                                         </button>
+                                        @endcan
                                     @else
+                                        @can('users.ban_permanent')
                                         <button onclick="confirm('Permanently ban this user? Their phone number will be burned to prevent re-registration.') && @this.banUser({{ $user->id }})" class="btn btn-xs btn-danger rounded-pill px-2.5 py-1 text-2xs fw-bold text-white border-0" style="background-color: var(--coral);">
                                             Ban User
                                         </button>
+                                        @endcan
                                     @endif
 
                                 </div>

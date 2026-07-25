@@ -160,7 +160,7 @@ class Users extends Component
 
     public function render()
     {
-        $query = User::with('role');
+        $query = User::with('roles');
 
         if (!empty($this->search)) {
             $query->where(function ($sub) {
