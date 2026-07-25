@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin;
 
+use App\Models\AuditLog;
 use App\Models\BannedPhone;
 use App\Models\User;
 use App\Services\NotificationService;
@@ -36,7 +37,9 @@ class Users extends Component
      */
     public function banUser(int $userId): void
     {
-        $this->authorizeAdmin();
+        if (!auth()->user() || !auth()->user()->can('users.ban_permanent')) {
+            abort(403, 'Unauthorized. Permission users.ban_permanent required.');
+        }
 
         $user = User::findOrFail($userId);
         if ($user->id === auth()->id()) {
@@ -66,6 +69,16 @@ class Users extends Component
             'Your account has been suspended',
             'Your account has been permanently banned by an administrator. If you believe this is an error, contact support.'
         );
+
+        AuditLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'banned_user',
+            'target_type' => User::class,
+            'target_id' => $user->id,
+            'old_values' => ['is_banned' => false],
+            'new_values' => ['is_banned' => true],
+            'ip_address' => request()->ip(),
+        ]);
     }
 
     /**
@@ -73,7 +86,9 @@ class Users extends Component
      */
     public function unbanUser(int $userId): void
     {
-        $this->authorizeAdmin();
+        if (!auth()->user() || !auth()->user()->can('users.unban')) {
+            abort(403, 'Unauthorized. Permission users.unban required.');
+        }
 
         $user = User::findOrFail($userId);
         $user->update(['is_banned' => false]);
@@ -89,6 +104,16 @@ class Users extends Component
             'Your account has been restored',
             'Your account ban has been lifted. Welcome back to the SCASH community.'
         );
+
+        AuditLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'unbanned_user',
+            'target_type' => User::class,
+            'target_id' => $user->id,
+            'old_values' => ['is_banned' => true],
+            'new_values' => ['is_banned' => false],
+            'ip_address' => request()->ip(),
+        ]);
     }
 
     /**
@@ -96,7 +121,9 @@ class Users extends Component
      */
     public function adjustPoints(TrustService $trustService): void
     {
-        $this->authorizeAdmin();
+        if (!auth()->user() || !auth()->user()->can('users.edit_credibility_score')) {
+            abort(403, 'Unauthorized. Permission users.edit_credibility_score required.');
+        }
 
         $this->validate([
             'selectedUserId' => 'required|exists:users,id',
@@ -117,18 +144,19 @@ class Users extends Component
         $this->adjustmentReason = 'Manual Admin Correction';
 
         session()->flash('success', "Manual points adjustment applied to user: {$user->pseudonym}");
+
+        AuditLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'adjusted_points',
+            'target_type' => User::class,
+            'target_id' => $user->id,
+            'old_values' => null, // We would need before/after points to be perfectly accurate, but action logs the intent
+            'new_values' => ['delta' => $this->pointsDelta, 'reason' => $this->adjustmentReason],
+            'ip_address' => request()->ip(),
+        ]);
     }
 
-    /**
-     * Enforce admin-only access gates.
-     */
-    private function authorizeAdmin(): void
-    {
-        $user = auth()->user();
-        if (!$user || !$user->isAdmin()) {
-            abort(403, 'Unauthorized. Administrator access required.');
-        }
-    }
+
 
     public function render()
     {

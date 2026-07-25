@@ -73,9 +73,9 @@ Route::get('/dashboard/notifications', \App\Livewire\NotificationsPage::class)
     ->middleware(['auth', 'not.banned', 'phone.verified', 'email.verified']);
 
 // Admin / Moderator Dashboard Routes
-Route::middleware(['auth', 'not.banned', 'phone.verified', 'email.verified', 'role:moderator'])->group(function () {
-    Route::get('/admin/reports', \App\Livewire\Admin\Reports::class)->name('admin.reports');
-    Route::get('/admin/users', \App\Livewire\Admin\Users::class)->name('admin.users');
-    Route::get('/admin/settings', \App\Livewire\Admin\Settings::class)->name('admin.settings');
+Route::middleware(['auth', 'not.banned', 'phone.verified', 'email.verified'])->group(function () {
+    Route::get('/admin/reports', \App\Livewire\Admin\Reports::class)->name('admin.reports')->middleware('permission:reports.view_queue');
+    Route::get('/admin/users', \App\Livewire\Admin\Users::class)->name('admin.users')->middleware('permission:users.suspend_temporary|users.ban_permanent');
+    Route::get('/admin/settings', \App\Livewire\Admin\Settings::class)->name('admin.settings')->middleware('role:superadmin');
 });
 

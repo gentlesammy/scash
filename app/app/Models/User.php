@@ -9,11 +9,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -81,11 +82,6 @@ class User extends Authenticatable implements MustVerifyEmail
 
     /* ─── Relationships ─── */
 
-    public function role(): BelongsTo
-    {
-        return $this->belongsTo(Role::class);
-    }
-
     public function notifications(): HasMany
     {
         return $this->hasMany(Notification::class);
@@ -139,25 +135,5 @@ class User extends Authenticatable implements MustVerifyEmail
         return $phoneOk && $emailOk;
     }
 
-    /* ─── Role Helpers ─── */
-
-    public function hasRole(string $slug): bool
-    {
-        return $this->role && $this->role->slug === $slug;
-    }
-
-    public function isSuperadmin(): bool
-    {
-        return $this->hasRole('superadmin');
-    }
-
-    public function isAdmin(): bool
-    {
-        return $this->hasRole('admin') || $this->isSuperadmin();
-    }
-
-    public function isModerator(): bool
-    {
-        return $this->hasRole('moderator') || $this->isAdmin();
-    }
+    // Spatie handles role checks via the HasRoles trait.
 }

@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Admin;
 
+use App\Models\AuditLog;
 use App\Models\Rating;
 use App\Models\Report;
 use App\Models\User;
@@ -39,7 +40,9 @@ class Reports extends Component
      */
     public function verifyReport(int $reportId, TrustService $trustService): void
     {
-        $this->authorizeModerator();
+        if (!auth()->user() || !auth()->user()->can('reports.approve')) {
+            abort(403, 'Unauthorized. Permission reports.approve required.');
+        }
 
         $report = Report::findOrFail($reportId);
         $report->update(['status' => 'verified']);
@@ -64,6 +67,16 @@ class Reports extends Component
                 $reportId
             );
         }
+
+        AuditLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'verified_report',
+            'target_type' => Report::class,
+            'target_id' => $reportId,
+            'old_values' => ['status' => 'pending'],
+            'new_values' => ['status' => 'verified'],
+            'ip_address' => request()->ip(),
+        ]);
     }
 
     /**
@@ -71,7 +84,9 @@ class Reports extends Component
      */
     public function markFakeReport(int $reportId, TrustService $trustService): void
     {
-        $this->authorizeModerator();
+        if (!auth()->user() || !auth()->user()->can('reports.reject')) {
+            abort(403, 'Unauthorized. Permission reports.reject required.');
+        }
 
         $report = Report::with('user')->findOrFail($reportId);
         $report->update(['status' => 'fake']);
@@ -106,6 +121,16 @@ class Reports extends Component
                 $reportId
             );
         }
+
+        AuditLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'marked_fake_report',
+            'target_type' => Report::class,
+            'target_id' => $reportId,
+            'old_values' => ['status' => 'pending'],
+            'new_values' => ['status' => 'fake'],
+            'ip_address' => request()->ip(),
+        ]);
     }
 
     /**
@@ -113,7 +138,9 @@ class Reports extends Component
      */
     public function escalateReport(int $reportId): void
     {
-        $this->authorizeModerator();
+        if (!auth()->user() || !auth()->user()->can('reports.quarantine')) {
+            abort(403, 'Unauthorized. Permission reports.quarantine required.');
+        }
 
         $report = Report::with('user')->findOrFail($reportId);
         $report->update(['status' => 'escalated']);
@@ -130,18 +157,19 @@ class Reports extends Component
                 $reportId
             );
         }
+
+        AuditLog::create([
+            'user_id' => auth()->id(),
+            'action' => 'escalated_report',
+            'target_type' => Report::class,
+            'target_id' => $reportId,
+            'old_values' => ['status' => 'pending'],
+            'new_values' => ['status' => 'escalated'],
+            'ip_address' => request()->ip(),
+        ]);
     }
 
-    /**
-     * Enforce moderator access gates.
-     */
-    private function authorizeModerator(): void
-    {
-        $user = auth()->user();
-        if (!$user || !$user->isModerator()) {
-            abort(403, 'Unauthorized. Moderator clearance required.');
-        }
-    }
+
 
     public function render()
     {
